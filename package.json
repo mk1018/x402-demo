@@ -1,0 +1,23 @@
+{
+  "name": "agent-x402-sample",
+  "private": true,
+  "scripts": {
+    "dev:agents": "pnpm --filter agents dev",
+    "dev:web": "pnpm --filter web dev",
+    "dev": "pnpm run dev:agents & pnpm run dev:web",
+    "build": "pnpm -r build",
+    "lint": "eslint 'apps/*/src/**/*.{ts,tsx}' 'packages/*/src/**/*.ts'",
+    "format": "prettier --write 'apps/*/src/**/*.{ts,tsx}' 'packages/*/src/**/*.ts'",
+    "format:check": "prettier --check 'apps/*/src/**/*.{ts,tsx}' 'packages/*/src/**/*.ts'",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.57.2",
+    "@typescript-eslint/parser": "^8.57.2",
+    "eslint": "^10.1.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.1",
+    "typescript": "^6.0.2"
+  },
+  "packageManager": "pnpm@10.30.2+sha512.36cdc707e7b7940a988c9c1ecf88d084f8514b5c3f085f53a2e244c2921d3b2545bc20dd4ebe1fc245feec463bb298aecea7a63ed1f7680b877dc6379d8d0cb4"
+}
