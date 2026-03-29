@@ -1,7 +1,6 @@
 [build]
 builder = "NIXPACKS"
 buildCommand = "pnpm install && pnpm --filter web build"
-nixpacksConfigPath = "apps/web/nixpacks.toml"
 
 [deploy]
 startCommand = "pnpm --filter web start"
