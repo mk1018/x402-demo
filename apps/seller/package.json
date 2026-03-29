@@ -1,5 +1,5 @@
 {
-  "name": "signer",
+  "name": "seller",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -10,16 +10,17 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@open-wallet-standard/core": "^1.1.2",
+    "@x402/core": "^2.8.0",
+    "@x402/evm": "^2.8.0",
+    "@x402/express": "^2.8.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "viem": "^2.47.6"
+    "shared": "workspace:*"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@types/node": "25.5.0",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2"
   }

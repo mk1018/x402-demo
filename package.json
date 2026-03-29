@@ -3,9 +3,10 @@
   "private": true,
   "scripts": {
     "dev:signer": "pnpm --filter signer dev",
+    "dev:seller": "pnpm --filter seller dev",
     "dev:agents": "pnpm --filter agents dev",
     "dev:web": "pnpm --filter web dev",
-    "dev": "pnpm run dev:signer & pnpm run dev:web & sleep 2 && pnpm run dev:agents",
+    "dev": "pnpm run dev:signer & pnpm run dev:seller & pnpm run dev:web & sleep 2 && pnpm run dev:agents",
     "build": "pnpm -r build",
     "lint": "eslint 'apps/*/src/**/*.{ts,tsx}' 'packages/*/src/**/*.ts'",
     "format": "prettier --write 'apps/*/src/**/*.{ts,tsx}' 'packages/*/src/**/*.ts'",

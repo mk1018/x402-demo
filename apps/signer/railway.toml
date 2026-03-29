@@ -1,0 +1,7 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "pnpm install && pnpm --filter signer build"
+
+[deploy]
+startCommand = "node apps/signer/dist/index.js"
+restartPolicyType = "ON_FAILURE"

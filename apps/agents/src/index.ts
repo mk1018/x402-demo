@@ -1,24 +1,23 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import { createSellerRouter } from "./seller.js";
 import { createBuyer } from "./buyer.js";
 import type { LogEvent } from "shared";
 
 function requireEnv(key: string): string {
   const value = process.env[key];
-  if (!value) {
-    throw new Error(`Missing required environment variable: ${key}`);
-  }
+  if (!value) throw new Error(`Missing required environment variable: ${key}`);
   return value;
 }
 
 const PORT = Number(process.env.PORT || 4001);
 const SIGNER_URL = requireEnv("SIGNER_URL");
-const SELLER_ADDRESS = requireEnv("SELLER_ADDRESS");
+const SIGNER_API_KEY = requireEnv("SIGNER_API_KEY");
+const SELLER_URL = requireEnv("SELLER_URL");
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 // --- SSE for real-time log streaming ---
 const sseClients = new Set<express.Response>();
@@ -51,9 +50,12 @@ function broadcast(event: LogEvent) {
   }
 }
 
-// --- Mount seller API ---
-const SELLER_BASE_URL = `http://localhost:${PORT}/api`;
-app.use("/api", createSellerRouter(SELLER_ADDRESS, broadcast));
+// Receive logs from seller
+app.post("/log", (req, res) => {
+  const event = req.body as LogEvent;
+  broadcast(event);
+  res.sendStatus(204);
+});
 
 // --- Orchestrator: trigger buyer flow ---
 let buyerRunning = false;
@@ -68,7 +70,7 @@ app.post("/start", async (_req, res) => {
   res.json({ status: "started" });
 
   try {
-    const buyer = await createBuyer(SIGNER_URL, SELLER_BASE_URL, broadcast);
+    const buyer = await createBuyer(SIGNER_URL, SIGNER_API_KEY, SELLER_URL, broadcast);
     await buyer.run();
     broadcast({
       id: `log-${Date.now()}`,
@@ -97,9 +99,9 @@ app.get("/health", (_req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Agent server running on http://localhost:${PORT}`);
+  console.log(`Buyer agent running on http://localhost:${PORT}`);
   console.log(`  Signer API: ${SIGNER_URL}`);
-  console.log(`  Seller API: http://localhost:${PORT}/api`);
+  console.log(`  Seller API: ${SELLER_URL}`);
   console.log(`  SSE events: http://localhost:${PORT}/events`);
   console.log(`  Start buyer: POST http://localhost:${PORT}/start`);
 });

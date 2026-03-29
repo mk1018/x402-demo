@@ -22,9 +22,25 @@ if (!WALLET_NAME) {
   process.exit(1);
 }
 
+const API_KEY = process.env.SIGNER_API_KEY;
+if (!API_KEY) {
+  console.error("Error: SIGNER_API_KEY is required");
+  process.exit(1);
+}
+
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// API key auth (skip health check)
+app.use((req, res, next) => {
+  if (req.path === "/health") return next();
+  if (req.headers["x-signer-key"] !== API_KEY) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  next();
+});
 
 app.get("/address", (_req, res, next) => {
   try {

@@ -32,6 +32,92 @@ importers:
       '@open-wallet-standard/core':
         specifier: ^1.1.2
         version: 1.1.2
+      '@stripe402/core':
+        specifier: ^0.0.1
+        version: 0.0.1
+      '@x402/core':
+        specifier: ^2.8.0
+        version: 2.8.0
+      '@x402/evm':
+        specifier: ^2.8.0
+        version: 2.8.0(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@6.0.6)
+      '@x402/fetch':
+        specifier: ^2.8.0
+        version: 2.8.0(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@6.0.6)
+      cors:
+        specifier: ^2.8.6
+        version: 2.8.6
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
+      express:
+        specifier: ^5.2.1
+        version: 5.2.1
+      shared:
+        specifier: workspace:*
+        version: link:../../packages/shared
+      stripe:
+        specifier: ^21.0.1
+        version: 21.0.1(@types/node@25.5.0)
+      viem:
+        specifier: ^2.47.6
+        version: 2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@6.0.6)(zod@3.25.76)
+    devDependencies:
+      '@types/cors':
+        specifier: ^2.8.19
+        version: 2.8.19
+      '@types/express':
+        specifier: ^5.0.6
+        version: 5.0.6
+      tsx:
+        specifier: ^4.21.0
+        version: 4.21.0
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
+
+  apps/seller:
+    dependencies:
+      '@x402/core':
+        specifier: ^2.8.0
+        version: 2.8.0
+      '@x402/evm':
+        specifier: ^2.8.0
+        version: 2.8.0(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@6.0.6)
+      '@x402/express':
+        specifier: ^2.8.0
+        version: 2.8.0(bufferutil@4.1.0)(ethers@6.16.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(express@5.2.1)(typescript@6.0.2)(utf-8-validate@6.0.6)
+      cors:
+        specifier: ^2.8.6
+        version: 2.8.6
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
+      express:
+        specifier: ^5.2.1
+        version: 5.2.1
+      shared:
+        specifier: workspace:*
+        version: link:../../packages/shared
+    devDependencies:
+      '@types/cors':
+        specifier: ^2.8.19
+        version: 2.8.19
+      '@types/express':
+        specifier: ^5.0.6
+        version: 5.0.6
+      tsx:
+        specifier: ^4.21.0
+        version: 4.21.0
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
+
+  apps/server:
+    dependencies:
+      '@open-wallet-standard/core':
+        specifier: ^1.1.2
+        version: 1.1.2
       '@x402/core':
         specifier: ^2.8.0
         version: 2.8.0
@@ -97,6 +183,9 @@ importers:
       '@types/express':
         specifier: ^5.0.6
         version: 5.0.6
+      '@types/node':
+        specifier: 25.5.0
+        version: 25.5.0
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
@@ -106,12 +195,33 @@ importers:
 
   apps/web:
     dependencies:
+      '@open-wallet-standard/core':
+        specifier: ^1.1.2
+        version: 1.1.2
       '@rainbow-me/rainbowkit':
         specifier: ^2.2.10
         version: 2.2.10(@tanstack/react-query@5.95.2(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@6.0.6)(zod@3.25.76))(wagmi@3.6.0(@tanstack/query-core@5.95.2)(@tanstack/react-query@5.95.2(react@19.2.4))(@types/react@19.2.14)(ox@0.14.7(typescript@6.0.2)(zod@3.25.76))(react@19.2.4)(typescript@6.0.2)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@6.0.6)(zod@3.25.76)))
+      '@stripe402/core':
+        specifier: ^0.0.1
+        version: 0.0.1
       '@tanstack/react-query':
         specifier: ^5.95.2
         version: 5.95.2(react@19.2.4)
+      '@x402/core':
+        specifier: ^2.8.0
+        version: 2.8.0
+      '@x402/evm':
+        specifier: ^2.8.0
+        version: 2.8.0(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@6.0.6)
+      '@x402/express':
+        specifier: ^2.8.0
+        version: 2.8.0(bufferutil@4.1.0)(ethers@6.16.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(express@5.2.1)(typescript@6.0.2)(utf-8-validate@6.0.6)
+      '@x402/fetch':
+        specifier: ^2.8.0
+        version: 2.8.0(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@6.0.6)
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
       next:
         specifier: ^16.2.1
         version: 16.2.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -121,6 +231,12 @@ importers:
       react-dom:
         specifier: ^19.2.4
         version: 19.2.4(react@19.2.4)
+      shared:
+        specifier: workspace:*
+        version: link:../../packages/shared
+      stripe:
+        specifier: ^21.0.1
+        version: 21.0.1(@types/node@25.5.0)
       viem:
         specifier: ^2.47.6
         version: 2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@6.0.6)(zod@3.25.76)
@@ -684,6 +800,9 @@ packages:
 
   '@stablelib/wipe@1.0.1':
     resolution: {integrity: sha512-WfqfX/eXGiAd3RJe4VU2snh/ZPwtSjLG4ynQ/vYzvghTh7dHFcI1wl+nrkWG6lGhukOxOsUHfv8dUXr58D0ayg==}
+
+  '@stripe402/core@0.0.1':
+    resolution: {integrity: sha512-yARPh2bv3wq7W2FUSJUSpnifUWSidk8BCr1b0LR/m9jJbT3sFxjUxaVV0NLLSApvMDFgWpqQZYWGsT1UxYvMdg==}
 
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
@@ -1786,6 +1905,15 @@ packages:
     resolution: {integrity: sha512-DvEy55V3DB7uknRo+4iOGT5fP1slR8wQohVdknigZPMpMstaKJQWhwiYBACJE3Ul2pTnATihhBYnRhZQHGBiRw==}
     engines: {node: '>= 0.8'}
 
+  stripe@21.0.1:
+    resolution: {integrity: sha512-ocv0j7dWttswDWV2XL/kb6+yiLpDXNXL3RQAOB5OB2kr49z0cEatdQc12+zP/j5nrXk6rAsT4N3y/NUvBbK7Pw==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@types/node': '>=18'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+
   styled-jsx@5.1.6:
     resolution: {integrity: sha512-qSVyDTeMotdvQYoHWLNGwRFJHC+i+ZvdBRYosOFgC+Wg1vx4frN2/RG/NA7SYqqvKNLf39P2LSRA2pu6n0XYZA==}
     engines: {node: '>= 12.0.0'}
@@ -2346,6 +2474,8 @@ snapshots:
       '@stablelib/wipe': 1.0.1
 
   '@stablelib/wipe@1.0.1': {}
+
+  '@stripe402/core@0.0.1': {}
 
   '@swc/helpers@0.5.15':
     dependencies:
@@ -3508,6 +3638,10 @@ snapshots:
   source-map-js@1.2.1: {}
 
   statuses@2.0.2: {}
+
+  stripe@21.0.1(@types/node@25.5.0):
+    optionalDependencies:
+      '@types/node': 25.5.0
 
   styled-jsx@5.1.6(react@19.2.4):
     dependencies:

@@ -12,8 +12,10 @@ interface PaymentInfo {
   network: string;
 }
 
-async function createSignerFromApi(signerUrl: string) {
-  const addrRes = await fetch(`${signerUrl}/address`);
+async function createSignerFromApi(signerUrl: string, signerApiKey: string) {
+  const addrRes = await fetch(`${signerUrl}/address`, {
+    headers: { "x-signer-key": signerApiKey },
+  });
   const { address } = (await addrRes.json()) as { address: string };
 
   const signer = {
@@ -26,7 +28,7 @@ async function createSignerFromApi(signerUrl: string) {
     }) {
       const res = await fetch(`${signerUrl}/sign-typed-data`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-signer-key": signerApiKey },
         body: JSON.stringify({ typedData: message }, (_key, value) =>
           typeof value === "bigint" ? value.toString() : value,
         ),
@@ -52,10 +54,11 @@ async function createSignerFromApi(signerUrl: string) {
 
 export async function createBuyer(
   signerUrl: string,
+  signerApiKey: string,
   sellerBaseUrl: string,
   emitLog: (event: LogEvent) => void,
 ) {
-  const signer = await createSignerFromApi(signerUrl);
+  const signer = await createSignerFromApi(signerUrl, signerApiKey);
 
   const client = new x402Client().register("eip155:84532", new ExactEvmScheme(signer));
   const httpClient = new x402HTTPClient(client);
