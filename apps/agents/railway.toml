@@ -1,6 +1,6 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "pnpm install && pnpm --filter shared build && pnpm --filter agents build"
+buildCommand = "pnpm install && pnpm --filter agents build"
 
 [deploy]
 startCommand = "node apps/agents/dist/index.js"
