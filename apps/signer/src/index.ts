@@ -1,24 +1,12 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import {
-  signTypedData,
-  signMessage,
-  getWallet,
-  type WalletInfo,
-  type SignResult,
-  type AccountInfo,
-} from "@open-wallet-standard/core";
+import { privateKeyToAccount } from "viem/accounts";
+import * as ows from "@open-wallet-standard/core";
 
 const PORT = Number(process.env.SIGNER_PORT);
 if (!PORT) {
   console.error("Error: SIGNER_PORT is required");
-  process.exit(1);
-}
-
-const WALLET_NAME = process.env.OWS_WALLET_NAME;
-if (!WALLET_NAME) {
-  console.error("Error: OWS_WALLET_NAME is required");
   process.exit(1);
 }
 
@@ -28,11 +16,23 @@ if (!API_KEY) {
   process.exit(1);
 }
 
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const WALLET_NAME = process.env.OWS_WALLET_NAME;
+
+if (!PRIVATE_KEY && !WALLET_NAME) {
+  console.error("Error: PRIVATE_KEY or OWS_WALLET_NAME is required");
+  process.exit(1);
+}
+
+const usePrivateKey = !!PRIVATE_KEY;
+const mode = usePrivateKey
+  ? `env:PRIVATE_KEY (${privateKeyToAccount(PRIVATE_KEY as `0x${string}`).address})`
+  : `ows:${WALLET_NAME}`;
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// API key auth (skip health check)
 app.use((req, res, next) => {
   if (req.path === "/health") return next();
   if (req.headers["x-signer-key"] !== API_KEY) {
@@ -42,23 +42,22 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/address", (_req, res, next) => {
+app.get("/address", (_req, res) => {
   try {
-    const wallet: WalletInfo = getWallet(WALLET_NAME);
-    const evmAccount: AccountInfo | undefined = wallet.accounts.find((a) =>
-      a.chainId.startsWith("eip155:"),
-    );
-    if (!evmAccount) {
-      res.status(500).json({ error: "No EVM account found in wallet" });
-      return;
+    if (usePrivateKey) {
+      res.json({ address: privateKeyToAccount(PRIVATE_KEY as `0x${string}`).address });
+    } else {
+      const wallet = ows.getWallet(WALLET_NAME as string);
+      const evm = wallet.accounts.find((a: { chainId: string }) => a.chainId.startsWith("eip155:"));
+      if (!evm) throw new Error("No EVM account found in wallet");
+      res.json({ address: evm.address });
     }
-    res.json({ address: evmAccount.address });
   } catch (err) {
-    next(err);
+    res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
   }
 });
 
-app.post("/sign-typed-data", (req, res, next) => {
+app.post("/sign-typed-data", async (req, res) => {
   const { typedData } = req.body;
   if (!typedData) {
     res.status(400).json({ error: "typedData is required" });
@@ -67,31 +66,37 @@ app.post("/sign-typed-data", (req, res, next) => {
 
   try {
     const parsed = typeof typedData === "string" ? JSON.parse(typedData) : typedData;
-    if (parsed.types && !parsed.types.EIP712Domain && parsed.domain) {
-      const domainTypes: Array<{ name: string; type: string }> = [];
-      if (parsed.domain.name !== undefined) domainTypes.push({ name: "name", type: "string" });
-      if (parsed.domain.version !== undefined)
-        domainTypes.push({ name: "version", type: "string" });
-      if (parsed.domain.chainId !== undefined)
-        domainTypes.push({ name: "chainId", type: "uint256" });
-      if (parsed.domain.verifyingContract !== undefined)
-        domainTypes.push({ name: "verifyingContract", type: "address" });
-      if (parsed.domain.salt !== undefined) domainTypes.push({ name: "salt", type: "bytes32" });
-      parsed.types.EIP712Domain = domainTypes;
+
+    if (usePrivateKey) {
+      const account = privateKeyToAccount(PRIVATE_KEY as `0x${string}`);
+      const signature = await account.signTypedData({
+        domain: parsed.domain,
+        types: parsed.types,
+        primaryType: parsed.primaryType,
+        message: parsed.message,
+      });
+      res.json({ signature });
+    } else {
+      if (parsed.types && !parsed.types.EIP712Domain && parsed.domain) {
+        const domainTypes: Array<{ name: string; type: string }> = [];
+        if (parsed.domain.name !== undefined) domainTypes.push({ name: "name", type: "string" });
+        if (parsed.domain.version !== undefined) domainTypes.push({ name: "version", type: "string" });
+        if (parsed.domain.chainId !== undefined) domainTypes.push({ name: "chainId", type: "uint256" });
+        if (parsed.domain.verifyingContract !== undefined) domainTypes.push({ name: "verifyingContract", type: "address" });
+        if (parsed.domain.salt !== undefined) domainTypes.push({ name: "salt", type: "bytes32" });
+        parsed.types.EIP712Domain = domainTypes;
+      }
+      const result = ows.signTypedData(WALLET_NAME as string, "evm", JSON.stringify(parsed));
+      const sig = result.signature.startsWith("0x") ? result.signature : `0x${result.signature}`;
+      res.json({ signature: sig });
     }
-    const json = JSON.stringify(parsed);
-    console.log("[sign-typed-data] input:", json);
-    const result: SignResult = signTypedData(WALLET_NAME, "evm", json);
-    console.log("[sign-typed-data] result:", JSON.stringify(result));
-    const sig = result.signature.startsWith("0x") ? result.signature : `0x${result.signature}`;
-    res.json({ signature: sig });
   } catch (err) {
     console.error("[sign-typed-data] error:", err);
-    next(err);
+    res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
   }
 });
 
-app.post("/sign-message", (req, res, next) => {
+app.post("/sign-message", async (req, res) => {
   const { message } = req.body;
   if (!message) {
     res.status(400).json({ error: "message is required" });
@@ -99,11 +104,17 @@ app.post("/sign-message", (req, res, next) => {
   }
 
   try {
-    const result: SignResult = signMessage(WALLET_NAME, "evm", message);
-    const sig = result.signature.startsWith("0x") ? result.signature : `0x${result.signature}`;
-    res.json({ signature: sig });
+    if (usePrivateKey) {
+      const account = privateKeyToAccount(PRIVATE_KEY as `0x${string}`);
+      const signature = await account.signMessage({ message });
+      res.json({ signature });
+    } else {
+      const result = ows.signMessage(WALLET_NAME as string, "evm", message);
+      const sig = result.signature.startsWith("0x") ? result.signature : `0x${result.signature}`;
+      res.json({ signature: sig });
+    }
   } catch (err) {
-    next(err);
+    res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
   }
 });
 
@@ -113,10 +124,10 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 });
 
 app.get("/health", (_req, res) => {
-  res.json({ status: "ok", wallet: WALLET_NAME });
+  res.json({ status: "ok", mode });
 });
 
 app.listen(PORT, () => {
   console.log(`Signer API running on http://localhost:${PORT}`);
-  console.log(`  Wallet: ${WALLET_NAME}`);
+  console.log(`  Mode: ${mode}`);
 });
