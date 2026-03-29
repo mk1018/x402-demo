@@ -190,8 +190,8 @@ function toCommonSteps(log: LogEvent, signLabel: string): Step[] {
         from: "buyer",
         to: "seller",
         label: isSigned
-          ? `${log.method} ${log.url.replace(/.*\/api/, "/api")}（${signLabel}署名済み）`
-          : `${log.method} ${log.url.replace(/.*\/api/, "/api")}`,
+          ? `${log.method} ${log.url.replace(/^https?:\/\/[^/]+/, "")}（${signLabel}署名済み）`
+          : `${log.method} ${log.url.replace(/^https?:\/\/[^/]+/, "")}`,
         color: isSigned ? "purple" : "blue",
         data: log.requestBody,
       },
