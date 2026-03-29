@@ -12,14 +12,12 @@ export const PRODUCT_CATALOG: Product[] = [
     id: "prod-002",
     name: "Premium API Access Token",
     price: 0.01,
-    description:
-      "24-hour access token for premium API tier with increased rate limits.",
+    description: "24-hour access token for premium API tier with increased rate limits.",
   },
   {
     id: "prod-003",
     name: "Smart Contract Audit Report",
     price: 0.01,
-    description:
-      "Automated security audit report for Solidity smart contracts.",
+    description: "Automated security audit report for Solidity smart contracts.",
   },
 ];

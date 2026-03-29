@@ -29,7 +29,8 @@ export function createSellerRouter(
     .register("eip155:84532", new ExactEvmScheme())
     .onBeforeVerify(async (ctx) => {
       const from = (ctx.paymentPayload.payload as Record<string, unknown>)?.authorization
-        ? ((ctx.paymentPayload.payload as Record<string, Record<string, unknown>>).authorization?.from as string)
+        ? ((ctx.paymentPayload.payload as Record<string, Record<string, unknown>>).authorization
+            ?.from as string)
         : "unknown";
       log({
         type: "signing",

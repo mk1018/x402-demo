@@ -14,7 +14,7 @@ function requireEnv(key: string): string {
 }
 
 const PORT = Number(process.env.PORT || 4001);
-const BUYER_PRIVATE_KEY = requireEnv("BUYER_PRIVATE_KEY");
+const SIGNER_URL = requireEnv("SIGNER_URL");
 const SELLER_ADDRESS = requireEnv("SELLER_ADDRESS");
 
 const app = express();
@@ -31,7 +31,7 @@ app.get("/events", (_req, res) => {
     "Access-Control-Allow-Origin": "*",
   });
   res.flushHeaders();
-  res.write("data: {\"type\":\"connected\"}\n\n");
+  res.write('data: {"type":"connected"}\n\n');
   sseClients.add(res);
 
   const heartbeat = setInterval(() => {
@@ -68,7 +68,7 @@ app.post("/start", async (_req, res) => {
   res.json({ status: "started" });
 
   try {
-    const buyer = createBuyer(BUYER_PRIVATE_KEY, SELLER_BASE_URL, broadcast);
+    const buyer = await createBuyer(SIGNER_URL, SELLER_BASE_URL, broadcast);
     await buyer.run();
     broadcast({
       id: `log-${Date.now()}`,
@@ -98,6 +98,7 @@ app.get("/health", (_req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Agent server running on http://localhost:${PORT}`);
+  console.log(`  Signer API: ${SIGNER_URL}`);
   console.log(`  Seller API: http://localhost:${PORT}/api`);
   console.log(`  SSE events: http://localhost:${PORT}/events`);
   console.log(`  Start buyer: POST http://localhost:${PORT}/start`);

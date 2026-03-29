@@ -29,6 +29,9 @@ importers:
 
   apps/agents:
     dependencies:
+      '@open-wallet-standard/core':
+        specifier: ^1.1.2
+        version: 1.1.2
       '@x402/core':
         specifier: ^2.8.0
         version: 2.8.0
@@ -53,6 +56,37 @@ importers:
       shared:
         specifier: workspace:*
         version: link:../../packages/shared
+      viem:
+        specifier: ^2.47.6
+        version: 2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@6.0.6)(zod@3.25.76)
+    devDependencies:
+      '@types/cors':
+        specifier: ^2.8.19
+        version: 2.8.19
+      '@types/express':
+        specifier: ^5.0.6
+        version: 5.0.6
+      tsx:
+        specifier: ^4.21.0
+        version: 4.21.0
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
+
+  apps/signer:
+    dependencies:
+      '@open-wallet-standard/core':
+        specifier: ^1.1.2
+        version: 1.1.2
+      cors:
+        specifier: ^2.8.6
+        version: 2.8.6
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
+      express:
+        specifier: ^5.2.1
+        version: 5.2.1
       viem:
         specifier: ^2.47.6
         version: 2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@6.0.6)(zod@3.25.76)
@@ -592,6 +626,30 @@ packages:
   '@noble/hashes@1.8.0':
     resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
     engines: {node: ^14.21.3 || >=16}
+
+  '@open-wallet-standard/core-darwin-arm64@1.1.2':
+    resolution: {integrity: sha512-fOxIHTMruUEi6W43Op5QuvrXdKsfY/dDkYg/+Zc2Yyldc/a2olt7cO543FTk/jNuSV+dTgVMjk5W23uoA4qCpQ==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@open-wallet-standard/core-darwin-x64@1.1.2':
+    resolution: {integrity: sha512-z+CNsLUkIcOQ6DvHk3xhFQqPsq7Mechvi9S6+qg56Qwgz5GU045V1AP875x7MK5FDyXxQWolQ+vvl54cwxoMTA==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@open-wallet-standard/core-linux-arm64-gnu@1.1.2':
+    resolution: {integrity: sha512-ZfnIVyav90XOv9AplfmsjZ4mjm+RJYmjDl1wxyTk4CnwpPYwmEDWBjhQRkTr3dC93qYZTPwn4zCjM3DldnhLIA==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@open-wallet-standard/core-linux-x64-gnu@1.1.2':
+    resolution: {integrity: sha512-OSpV/j1JUu0Gf44oTou818pACLiG2Dk7C0AljUwGaFnGHzDRgY3kxp2c5J5Jldi5ge1QNDuy3+ttC7TVgIEoGg==}
+    cpu: [x64]
+    os: [linux]
+
+  '@open-wallet-standard/core@1.1.2':
+    resolution: {integrity: sha512-zcSAFWq4AD7kcY70Q16jG3ML7kFUgN+kFof6RY58VZmoiLzhbpaGS7/tT2dHW8Db8lplnQzZRVWf6f1gCwO1Wg==}
+    hasBin: true
 
   '@rainbow-me/rainbowkit@2.2.10':
     resolution: {integrity: sha512-8+E4die1A2ovN9t3lWxWnwqTGEdFqThXDQRj+E4eDKuUKyymYD+66Gzm6S9yfg8E95c6hmGlavGUfYPtl1EagA==}
@@ -2217,6 +2275,25 @@ snapshots:
   '@noble/hashes@1.3.2': {}
 
   '@noble/hashes@1.8.0': {}
+
+  '@open-wallet-standard/core-darwin-arm64@1.1.2':
+    optional: true
+
+  '@open-wallet-standard/core-darwin-x64@1.1.2':
+    optional: true
+
+  '@open-wallet-standard/core-linux-arm64-gnu@1.1.2':
+    optional: true
+
+  '@open-wallet-standard/core-linux-x64-gnu@1.1.2':
+    optional: true
+
+  '@open-wallet-standard/core@1.1.2':
+    optionalDependencies:
+      '@open-wallet-standard/core-darwin-arm64': 1.1.2
+      '@open-wallet-standard/core-darwin-x64': 1.1.2
+      '@open-wallet-standard/core-linux-arm64-gnu': 1.1.2
+      '@open-wallet-standard/core-linux-x64-gnu': 1.1.2
 
   '@rainbow-me/rainbowkit@2.2.10(@tanstack/react-query@5.95.2(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@6.0.6)(zod@3.25.76))(wagmi@3.6.0(@tanstack/query-core@5.95.2)(@tanstack/react-query@5.95.2(react@19.2.4))(@types/react@19.2.14)(ox@0.14.7(typescript@6.0.2)(zod@3.25.76))(react@19.2.4)(typescript@6.0.2)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@6.0.6)(zod@3.25.76)))':
     dependencies:

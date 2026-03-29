@@ -6,6 +6,7 @@
 
 - **Agent A (Buyer)**: 商品を探して自動で購入するエージェント
 - **Agent B (Seller)**: x402 で保護された商品カタログ API を提供
+- **Signer**: 秘密鍵を隔離管理し、署名 API を提供するローカルサーバー
 - **Web UI**: エージェント間の通信・決済をリアルタイム表示
 
 ## セットアップ
@@ -21,18 +22,13 @@
 pnpm install
 ```
 
-### 2. 環境変数の設定
+### 2. ウォレットのセットアップ
+
+秘密鍵は [Open Wallet Standard (OWS)](https://github.com/open-wallet-standard/core) で暗号化管理します。エージェントに秘密鍵は渡しません。
 
 ```bash
-cp .env.example .env
-```
-
-`.env` を編集して以下を設定:
-
-```
-BUYER_PRIVATE_KEY=0x...    # Base Sepolia テストネット用 EOA 秘密鍵
-SELLER_ADDRESS=0x...       # 売り手の EOA アドレス（受取先）
-NEXT_PUBLIC_API_URL=http://localhost:3001
+cd apps/signer
+OWS_PRIVATE_KEY=<秘密鍵> npx ows wallet import --name agent-buyer --private-key --chain evm
 ```
 
 #### テストネット用ウォレットの準備
@@ -40,22 +36,31 @@ NEXT_PUBLIC_API_URL=http://localhost:3001
 1. MetaMask 等で新しいアカウントを2つ作成（Buyer用 / Seller用）
 2. [Base Sepolia Faucet](https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet) で ETH を取得
 3. [Circle USDC Faucet](https://faucet.circle.com/) で Base Sepolia USDC を取得
-4. Buyer の秘密鍵を `BUYER_PRIVATE_KEY` に設定
-5. Seller のアドレスを `SELLER_ADDRESS` に設定
+4. Buyer の秘密鍵を OWS にインポート（上記コマンド）
+5. Seller のアドレスを `apps/agents/.env` の `SELLER_ADDRESS` に設定
 
-### 3. 起動
-
-ターミナルを2つ開いて実行:
+### 3. 環境変数の設定
 
 ```bash
-# ターミナル1: Agent サーバー
-pnpm dev:agents
+# apps/agents/.env
+PORT=4001
+SIGNER_URL=http://localhost:4002
+SELLER_ADDRESS=0x...       # 売り手の EOA アドレス（受取先）
 
-# ターミナル2: Web UI
-pnpm dev:web
+# apps/signer/.env
+OWS_WALLET_NAME=agent-buyer
+SIGNER_PORT=4002
 ```
 
-### 4. デモ実行
+### 4. 起動
+
+```bash
+pnpm dev
+```
+
+Signer (port 4002) → Agents (port 4001) → Web UI (port 3000) が起動します。
+
+### 5. デモ実行
 
 1. ブラウザで http://localhost:3000 を開く
 2. 「Start Buyer Agent」ボタンをクリック
@@ -68,6 +73,9 @@ pnpm dev:web
     ↕ SSE
 [Orchestrator Server (Express)]
     ├── Agent A (Buyer)  ── @x402/fetch ──→ Agent B API
+    │       ↕ sign
+    │   [Signer API (OWS)]
+    │   秘密鍵はここで暗号化管理
     └── Agent B (Seller) ── @x402/express ← リクエスト
                                 ↕ verify/settle
                           [x402 Facilitator]
@@ -79,7 +87,8 @@ pnpm dev:web
 ```
 ├── apps/
 │   ├── web/          # Next.js UI
-│   └── agents/       # Express (Buyer + Seller + Orchestrator)
+│   ├── agents/       # Express (Buyer + Seller + Orchestrator)
+│   └── signer/       # 署名 API サーバー (OWS)
 ├── packages/
 │   └── shared/       # 型定義・商品データ
 └── package.json      # pnpm workspace
