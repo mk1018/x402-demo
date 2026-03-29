@@ -80,9 +80,12 @@ app.post("/sign-typed-data", async (req, res) => {
       if (parsed.types && !parsed.types.EIP712Domain && parsed.domain) {
         const domainTypes: Array<{ name: string; type: string }> = [];
         if (parsed.domain.name !== undefined) domainTypes.push({ name: "name", type: "string" });
-        if (parsed.domain.version !== undefined) domainTypes.push({ name: "version", type: "string" });
-        if (parsed.domain.chainId !== undefined) domainTypes.push({ name: "chainId", type: "uint256" });
-        if (parsed.domain.verifyingContract !== undefined) domainTypes.push({ name: "verifyingContract", type: "address" });
+        if (parsed.domain.version !== undefined)
+          domainTypes.push({ name: "version", type: "string" });
+        if (parsed.domain.chainId !== undefined)
+          domainTypes.push({ name: "chainId", type: "uint256" });
+        if (parsed.domain.verifyingContract !== undefined)
+          domainTypes.push({ name: "verifyingContract", type: "address" });
         if (parsed.domain.salt !== undefined) domainTypes.push({ name: "salt", type: "bytes32" });
         parsed.types.EIP712Domain = domainTypes;
       }
