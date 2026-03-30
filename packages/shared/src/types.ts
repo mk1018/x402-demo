@@ -27,7 +27,13 @@ export interface Receipt {
   timestamp: number;
 }
 
-export type LogEventType = "request" | "response_402" | "signing" | "response_200" | "error";
+export type LogEventType =
+  | "request"
+  | "response_402"
+  | "signing"
+  | "response_200"
+  | "error"
+  | "phase";
 
 export interface LogEvent {
   id: string;

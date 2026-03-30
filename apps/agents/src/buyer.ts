@@ -199,6 +199,8 @@ export async function createBuyer(
   }
 
   async function run(): Promise<void> {
+    log({ type: "phase", method: "SYSTEM", url: "", message: "Phase 1: 商品情報取得" });
+
     const { body: catalog } = await paidFetch(`${sellerBaseUrl}/products`);
     const products = catalog as Product[];
 
@@ -238,6 +240,8 @@ export async function createBuyer(
       message: "オンチェーン決済の確定を待機中...",
     });
     await new Promise((r) => setTimeout(r, 5000));
+
+    log({ type: "phase", method: "SYSTEM", url: "", message: "Phase 2: 商品購入" });
 
     log({
       type: "request",

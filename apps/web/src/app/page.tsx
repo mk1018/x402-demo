@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 interface LogEvent {
   id: string;
   timestamp: number;
-  type: "request" | "response_402" | "signing" | "response_200" | "error";
+  type: "request" | "response_402" | "signing" | "response_200" | "error" | "phase";
   method: string;
   url: string;
   status?: number;
@@ -29,10 +29,25 @@ interface Step {
   txHash?: string;
   data?: unknown;
   isSystem?: boolean;
+  isPhase?: boolean;
 }
 
 function toSteps(log: LogEvent): Step[] {
   const id = log.id;
+
+  if (log.type === "phase") {
+    return [
+      {
+        id,
+        from: "buyer",
+        to: "buyer",
+        label: log.message || "",
+        color: "white",
+        isSystem: true,
+        isPhase: true,
+      },
+    ];
+  }
 
   if (log.method === "FACILITATOR") {
     if (log.url === "verify") {
@@ -209,6 +224,12 @@ const CLS: Record<string, { text: string; bg: string; border: string; line: stri
     border: "border-cyan-500/30",
     line: "#06b6d4",
   },
+  white: {
+    text: "text-white",
+    bg: "bg-gray-700",
+    border: "border-gray-600",
+    line: "#ffffff",
+  },
 };
 
 const LANES: { key: Actor; emoji: string; name: string; sub: string }[] = [
@@ -259,6 +280,25 @@ function Lifelines() {
 
 function StepRow({ step, index }: { step: Step; index: number }) {
   const c = CLS[step.color] || CLS.gray;
+
+  if (step.isPhase) {
+    return (
+      <div className="relative animate-fadeIn" style={{ animationDelay: "0ms" }}>
+        <div className="absolute inset-0 pointer-events-none">
+          <Lifelines />
+        </div>
+        <div className="relative z-10 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-gray-600" />
+            <span className="text-xs font-bold text-white bg-gray-700 px-3 py-1 rounded-full">
+              {step.label}
+            </span>
+            <div className="flex-1 h-px bg-gray-600" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (step.isSystem) {
     const x = LANE_X[step.from];
